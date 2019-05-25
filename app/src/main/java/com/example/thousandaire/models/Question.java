@@ -4,13 +4,17 @@ public class Question {
     private int mTextResId;
     private int mAnswer;
     private int[] mChoiceIds;
+    private int mAmount;
 
-    public Question(int questionTextId, int answerId, int[] choiceIds)
+    public Question(int questionTextId, int answerId, int[] choiceIds, int amount)
     {
         this.mTextResId = questionTextId;
         this.mAnswer = answerId;
         this.mChoiceIds = choiceIds;
+        this.mAmount = amount;
     }
+
+    public int getAmount() { return this.mAmount; }
 
     public int getQuestionTextId()
     {

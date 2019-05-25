@@ -1,5 +1,7 @@
 package com.example.thousandaire;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +14,8 @@ import com.example.thousandaire.models.Question;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CODE_CONTINUE = 0;
+
     private TextView mQuestion;
     private Button mAnswerA;
     private Button mAnswerB;
@@ -20,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Game mGame;
     private Question mCurrentQuestion;
+    private boolean mContinue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,44 +32,43 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mGame = new Game();
+        mContinue = false;
         mGame.addQuestion(new Question(R.string.hundred_question,
                 R.string.hundred_question_a,
                 new int[] {R.string.hundred_question_a,
                         R.string.hundred_question_b,
                         R.string.hundred_question_c,
-                        R.string.hundred_question_d}));
+                        R.string.hundred_question_d}, 100));
         mGame.addQuestion(new Question(R.string.two_hundred_question,
                 R.string.two_hundred_question_c,
                 new int[] {R.string.two_hundred_question_a,
                         R.string.two_hundred_question_b,
                         R.string.two_hundred_question_c,
-                        R.string.two_hundred_question_d}));
+                        R.string.two_hundred_question_d},200));
         mGame.addQuestion(new Question(R.string.three_hundred_question,
                 R.string.three_hundred_question_c,
                 new int[] {R.string.three_hundred_question_a,
                         R.string.three_hundred_question_b,
                         R.string.three_hundred_question_c,
-                        R.string.three_hundred_question_d}));
+                        R.string.three_hundred_question_d}, 300));
         mGame.addQuestion(new Question(R.string.four_hundred_question,
                 R.string.four_hundred_question_d,
                 new int[] {R.string.four_hundred_question_a,
                         R.string.four_hundred_question_b,
                         R.string.four_hundred_question_c,
-                        R.string.four_hundred_question_d}));
+                        R.string.four_hundred_question_d}, 400));
         mGame.addQuestion(new Question(R.string.five_hundred_question,
                 R.string.five_hundred_question_d,
                 new int[] {R.string.five_hundred_question_a,
                         R.string.five_hundred_question_b,
                         R.string.five_hundred_question_c,
-                        R.string.five_hundred_question_d}));
+                        R.string.five_hundred_question_d}, 500));
         mGame.addQuestion(new Question(R.string.thousand_question,
                 R.string.thousand_question_c,
                 new int[] {R.string.thousand_question_a,
                         R.string.thousand_question_b,
                         R.string.thousand_question_c,
-                        R.string.thousand_question_d}));
-
-        mCurrentQuestion = mGame.getNextQuestion();
+                        R.string.thousand_question_d},1000));
 
         mQuestion = (TextView) this.findViewById(R.id.question_text);
 
@@ -73,9 +77,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                checkAnswer(mCurrentQuestion.getChoiceIds()[0]);
-                mCurrentQuestion = mGame.getNextQuestion();
-                updateQuestion();
+                handleResponse(0);
             }
         });
         mAnswerB = (Button) this.findViewById(R.id.answer_b);
@@ -83,9 +85,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                checkAnswer(mCurrentQuestion.getChoiceIds()[1]);
-                mCurrentQuestion = mGame.getNextQuestion();
-                updateQuestion();
+                handleResponse(1);
             }
         });
         mAnswerC = (Button) this.findViewById(R.id.answer_c);
@@ -93,9 +93,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                checkAnswer(mCurrentQuestion.getChoiceIds()[2]);
-                mCurrentQuestion = mGame.getNextQuestion();
-                updateQuestion();
+                handleResponse(2);
             }
         });
         mAnswerD = (Button) this.findViewById(R.id.answer_d);
@@ -103,21 +101,71 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                checkAnswer(mCurrentQuestion.getChoiceIds()[3]);
-                mCurrentQuestion = mGame.getNextQuestion();
-                updateQuestion();
+                handleResponse(3);
             }
         });
 
         updateQuestion();
     }
 
-    private void checkAnswer(int choiceId)
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if(resultCode != Activity.RESULT_OK)
+        {
+            return;
+        }
+
+        if(requestCode == REQUEST_CODE_CONTINUE)
+        {
+            if(data == null) {
+                return;
+            }
+            mContinue = ProceedActivity.wasContinueSelected(data);
+            if(mContinue)
+            {
+                mGame.proceedToNextQuestion();
+                updateQuestion();
+            }
+            
+        }
+    }
+
+    public void handleResponse(int selection)
+    {
+        boolean isCorrect = isCorrectAnswer(mCurrentQuestion.getChoiceIds()[selection]);
+        showResults(isCorrect);
+    }
+
+    private boolean isCorrectAnswer(int choiceId)
     {
         int answerId = mCurrentQuestion.getAnswerId();
         if(choiceId == answerId)
         {
-            Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private void showResults(boolean isCorrect)
+    {
+        if(isCorrect)
+        {
+            if(!mGame.isFinalQuestion())
+            {
+                int currentAmount = mGame.getCurrentQuestion().getAmount();
+                int nextAmount = mGame.getNextQuestion().getAmount();
+                if ((currentAmount >= 0) && (nextAmount >= 0)) {
+                    Intent intent = ProceedActivity.newIntent(this, currentAmount, nextAmount);
+                    startActivityForResult(intent, REQUEST_CODE_CONTINUE);
+                }
+            }
+            else
+            {
+                Toast.makeText(this, "You Win!", Toast.LENGTH_SHORT).show();
+            }
         }
         else
         {
@@ -127,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateQuestion()
     {
+        mCurrentQuestion = mGame.getCurrentQuestion();
         if(mCurrentQuestion == null)
             return;
         int question = mCurrentQuestion.getQuestionTextId();

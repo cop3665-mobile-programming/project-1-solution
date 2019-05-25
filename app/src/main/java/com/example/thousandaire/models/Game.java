@@ -17,17 +17,31 @@ public class Game {
         this.mQuestions.add(newQuestion);
     }
 
-    public Question getNextQuestion()
+    public Question getCurrentQuestion()
     {
         if(mCurrentQuestionIndex == mQuestions.size())
         {
             return null;
         }
-        return this.mQuestions.get(this.mCurrentQuestionIndex++);
+        return this.mQuestions.get(this.mCurrentQuestionIndex);
     }
 
-    public int getNumberQuestions()
+    public Question getNextQuestion()
     {
-        return this.mQuestions.size();
+        if((mCurrentQuestionIndex + 1) == mQuestions.size())
+        {
+            return null;
+        }
+        return this.mQuestions.get(this.mCurrentQuestionIndex + 1);
+    }
+
+    public boolean isFinalQuestion()
+    {
+        return mCurrentQuestionIndex == this.mQuestions.size();
+    }
+
+    public void proceedToNextQuestion()
+    {
+        this.mCurrentQuestionIndex++;
     }
 }
