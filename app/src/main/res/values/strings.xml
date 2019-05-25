@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">Thousandaire</string>
+    <string name="hundred_question">What is the name of Mickey Mouse\'s dog?</string>
+    <string name="hundred_question_a">Pluto</string>
+    <string name="hundred_question_b">Goofy</string>
+    <string name="hundred_question_c">Minnie</string>
+    <string name="hundred_question_d">Daisy</string>
+    <string name="two_hundred_question">What is the name of Mickey Mouse\'s dog?</string>
+    <string name="two_hundred_question_a">Pluto</string>
+    <string name="two_hundred_question_b">Goofy</string>
+    <string name="two_hundred_question_c">Minnie</string>
+    <string name="two_hundred_question_d">Daisy</string>
+    <string name="three_hundred_question">What is the name of Mickey Mouse\'s dog?</string>
+    <string name="three_hundred_question_a">Pluto</string>
+    <string name="three_hundred_question_b">Goofy</string>
+    <string name="three_hundred_question_c">Minnie</string>
+    <string name="three_hundred_question_d">Daisy</string>
+    <string name="four_hundred_question">What is the name of Mickey Mouse\'s dog?</string>
+    <string name="four_hundred_question_a">Pluto</string>
+    <string name="four_hundred_question_b">Goofy</string>
+    <string name="four_hundred_question_c">Minnie</string>
+    <string name="four_hundred_question_d">Daisy</string>
+    <string name="five_hundred_question">What is the name of Mickey Mouse\'s dog?</string>
+    <string name="five_hundred_question_a">Pluto</string>
+    <string name="five_hundred_question_b">Goofy</string>
+    <string name="five_hundred_question_c">Minnie</string>
+    <string name="five_hundred_question_d">Daisy</string>
+    <string name="thousand_question">What is the name of Mickey Mouse\'s dog?</string>
+    <string name="thousand_question_a">Pluto</string>
+    <string name="thousand_question_b">Goofy</string>
+    <string name="thousand_question_c">Minnie</string>
+    <string name="thousand_question_d">Daisy</string>
 </resources>
