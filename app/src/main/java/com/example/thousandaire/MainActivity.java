@@ -15,6 +15,7 @@ import com.example.thousandaire.models.Question;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_CONTINUE = 0;
+    private static final int REQUEST_CODE_GAMEOVER = 1;
 
     private TextView mQuestion;
     private Button mAnswerA;
@@ -126,7 +127,12 @@ public class MainActivity extends AppCompatActivity {
                 mGame.proceedToNextQuestion();
                 updateQuestion();
             }
-            
+
+        }
+
+        if(requestCode == REQUEST_CODE_GAMEOVER)
+        {
+            finish();
         }
     }
 
@@ -169,7 +175,8 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
-            Toast.makeText(this, "Incorrect!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, GameOverActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_GAMEOVER);
         }
     }
 
