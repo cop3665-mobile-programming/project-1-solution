@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.thousandaire.models.Game;
 import com.example.thousandaire.models.Question;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,14 +17,54 @@ public class MainActivity extends AppCompatActivity {
     private Button mAnswerB;
     private Button mAnswerC;
     private Button mAnswerD;
-    private Question[] mQuestionBank = new Question[] {
-      new Question(R.string.hundred_question, R.string.hundred_question_a, new int[] {R.string.hundred_question_a, R.string.hundred_question_b, R.string.hundred_question_c, R.string.hundred_question_d})
-    };
+
+    private Game mGame;
+    private Question mCurrentQuestion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mGame = new Game();
+        mGame.addQuestion(new Question(R.string.hundred_question,
+                R.string.hundred_question_a,
+                new int[] {R.string.hundred_question_a,
+                        R.string.hundred_question_b,
+                        R.string.hundred_question_c,
+                        R.string.hundred_question_d}));
+        mGame.addQuestion(new Question(R.string.two_hundred_question,
+                R.string.two_hundred_question_c,
+                new int[] {R.string.two_hundred_question_a,
+                        R.string.two_hundred_question_b,
+                        R.string.two_hundred_question_c,
+                        R.string.two_hundred_question_d}));
+        mGame.addQuestion(new Question(R.string.three_hundred_question,
+                R.string.three_hundred_question_c,
+                new int[] {R.string.three_hundred_question_a,
+                        R.string.three_hundred_question_b,
+                        R.string.three_hundred_question_c,
+                        R.string.three_hundred_question_d}));
+        mGame.addQuestion(new Question(R.string.four_hundred_question,
+                R.string.four_hundred_question_d,
+                new int[] {R.string.four_hundred_question_a,
+                        R.string.four_hundred_question_b,
+                        R.string.four_hundred_question_c,
+                        R.string.four_hundred_question_d}));
+        mGame.addQuestion(new Question(R.string.five_hundred_question,
+                R.string.five_hundred_question_d,
+                new int[] {R.string.five_hundred_question_a,
+                        R.string.five_hundred_question_b,
+                        R.string.five_hundred_question_c,
+                        R.string.five_hundred_question_d}));
+        mGame.addQuestion(new Question(R.string.thousand_question,
+                R.string.thousand_question_c,
+                new int[] {R.string.thousand_question_a,
+                        R.string.thousand_question_b,
+                        R.string.thousand_question_c,
+                        R.string.thousand_question_d}));
+
+        mCurrentQuestion = mGame.getNextQuestion();
 
         mQuestion = (TextView) this.findViewById(R.id.question_text);
 
@@ -32,7 +73,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                checkAnswer(mQuestionBank[0].getChoiceIds()[0]);
+                checkAnswer(mCurrentQuestion.getChoiceIds()[0]);
+                mCurrentQuestion = mGame.getNextQuestion();
+                updateQuestion();
             }
         });
         mAnswerB = (Button) this.findViewById(R.id.answer_b);
@@ -40,7 +83,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                checkAnswer(mQuestionBank[0].getChoiceIds()[1]);
+                checkAnswer(mCurrentQuestion.getChoiceIds()[1]);
+                mCurrentQuestion = mGame.getNextQuestion();
+                updateQuestion();
             }
         });
         mAnswerC = (Button) this.findViewById(R.id.answer_c);
@@ -48,7 +93,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                checkAnswer(mQuestionBank[0].getChoiceIds()[2]);
+                checkAnswer(mCurrentQuestion.getChoiceIds()[2]);
+                mCurrentQuestion = mGame.getNextQuestion();
+                updateQuestion();
             }
         });
         mAnswerD = (Button) this.findViewById(R.id.answer_d);
@@ -56,7 +103,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                checkAnswer(mQuestionBank[0].getChoiceIds()[3]);
+                checkAnswer(mCurrentQuestion.getChoiceIds()[3]);
+                mCurrentQuestion = mGame.getNextQuestion();
+                updateQuestion();
             }
         });
 
@@ -65,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkAnswer(int choiceId)
     {
-        int answerId = mQuestionBank[0].getAnswerId();
+        int answerId = mCurrentQuestion.getAnswerId();
         if(choiceId == answerId)
         {
             Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
@@ -78,9 +127,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateQuestion()
     {
-        int question = mQuestionBank[0].getQuestionTextId();
+        if(mCurrentQuestion == null)
+            return;
+        int question = mCurrentQuestion.getQuestionTextId();
         mQuestion.setText(question);
-        int[] choices = mQuestionBank[0].getChoiceIds();
+        int[] choices = mCurrentQuestion.getChoiceIds();
 
         mAnswerA.setText(choices[0]);
         mAnswerB.setText(choices[1]);
