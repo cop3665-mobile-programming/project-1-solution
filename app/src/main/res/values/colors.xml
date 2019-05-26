@@ -2,6 +2,7 @@
 <resources>
     <color name="colorCorrect">#34C150</color>
     <color name="colorIncorrect">#F20000</color>
+    <color name="colorScore">#1655ba</color>
     <color name="colorCorrectText">#FFFFFF</color>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>

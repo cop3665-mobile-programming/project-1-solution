@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_CONTINUE = 0;
     private static final int REQUEST_CODE_GAMEOVER = 1;
+    private static final int REQUEST_CODE_PLAYOVER = 2;
 
     private TextView mQuestion;
     private Button mAnswerA;
@@ -25,51 +26,13 @@ public class MainActivity extends AppCompatActivity {
 
     private Game mGame;
     private Question mCurrentQuestion;
-    private boolean mContinue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mGame = new Game();
-        mContinue = false;
-        mGame.addQuestion(new Question(R.string.hundred_question,
-                R.string.hundred_question_a,
-                new int[] {R.string.hundred_question_a,
-                        R.string.hundred_question_b,
-                        R.string.hundred_question_c,
-                        R.string.hundred_question_d}, 100));
-        mGame.addQuestion(new Question(R.string.two_hundred_question,
-                R.string.two_hundred_question_c,
-                new int[] {R.string.two_hundred_question_a,
-                        R.string.two_hundred_question_b,
-                        R.string.two_hundred_question_c,
-                        R.string.two_hundred_question_d},200));
-        mGame.addQuestion(new Question(R.string.three_hundred_question,
-                R.string.three_hundred_question_c,
-                new int[] {R.string.three_hundred_question_a,
-                        R.string.three_hundred_question_b,
-                        R.string.three_hundred_question_c,
-                        R.string.three_hundred_question_d}, 300));
-        mGame.addQuestion(new Question(R.string.four_hundred_question,
-                R.string.four_hundred_question_d,
-                new int[] {R.string.four_hundred_question_a,
-                        R.string.four_hundred_question_b,
-                        R.string.four_hundred_question_c,
-                        R.string.four_hundred_question_d}, 400));
-        mGame.addQuestion(new Question(R.string.five_hundred_question,
-                R.string.five_hundred_question_d,
-                new int[] {R.string.five_hundred_question_a,
-                        R.string.five_hundred_question_b,
-                        R.string.five_hundred_question_c,
-                        R.string.five_hundred_question_d}, 500));
-        mGame.addQuestion(new Question(R.string.thousand_question,
-                R.string.thousand_question_c,
-                new int[] {R.string.thousand_question_a,
-                        R.string.thousand_question_b,
-                        R.string.thousand_question_c,
-                        R.string.thousand_question_d},1000));
+        startNewGame();
 
         mQuestion = (TextView) this.findViewById(R.id.question_text);
 
@@ -116,19 +79,30 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if(requestCode == REQUEST_CODE_CONTINUE)
-        {
-            if(data == null) {
-                return;
+        if(data!= null) {
+            if (requestCode == REQUEST_CODE_CONTINUE) {
+                if (ProceedActivity.wasContinueSelected(data)) {
+                    mGame.proceedToNextQuestion();
+                    updateQuestion();
+                }
+                else
+                {
+                    Intent intent = ScoreActivity.newIntent(MainActivity.this, mGame.getCurrentQuestion().getAmount());
+                    startActivityForResult(intent, REQUEST_CODE_PLAYOVER);
+                }
             }
-            mContinue = ProceedActivity.wasContinueSelected(data);
-            if(mContinue)
-            {
-                mGame.proceedToNextQuestion();
-                updateQuestion();
+            if (requestCode == REQUEST_CODE_PLAYOVER) {
+                if (ScoreActivity.wasPlayAgainSelected(data)) {
+                    startNewGame();
+                    updateQuestion();
+                }
+                else
+                {
+                    finish();
+                }
             }
-
         }
+
 
         if(requestCode == REQUEST_CODE_GAMEOVER)
         {
@@ -170,7 +144,8 @@ public class MainActivity extends AppCompatActivity {
             }
             else
             {
-                Toast.makeText(this, "You Win!", Toast.LENGTH_SHORT).show();
+                Intent intent = ScoreActivity.newIntent(MainActivity.this, mGame.getCurrentQuestion().getAmount());
+                startActivityForResult(intent, REQUEST_CODE_PLAYOVER);
             }
         }
         else
@@ -178,6 +153,48 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, GameOverActivity.class);
             startActivityForResult(intent, REQUEST_CODE_GAMEOVER);
         }
+    }
+
+    private void startNewGame()
+    {
+        mGame = new Game();
+        mGame.addQuestion(new Question(R.string.hundred_question,
+                R.string.hundred_question_a,
+                new int[] {R.string.hundred_question_a,
+                        R.string.hundred_question_b,
+                        R.string.hundred_question_c,
+                        R.string.hundred_question_d}, 100));
+        mGame.addQuestion(new Question(R.string.two_hundred_question,
+                R.string.two_hundred_question_c,
+                new int[] {R.string.two_hundred_question_a,
+                        R.string.two_hundred_question_b,
+                        R.string.two_hundred_question_c,
+                        R.string.two_hundred_question_d},200));
+        mGame.addQuestion(new Question(R.string.three_hundred_question,
+                R.string.three_hundred_question_c,
+                new int[] {R.string.three_hundred_question_a,
+                        R.string.three_hundred_question_b,
+                        R.string.three_hundred_question_c,
+                        R.string.three_hundred_question_d}, 300));
+        mGame.addQuestion(new Question(R.string.four_hundred_question,
+                R.string.four_hundred_question_d,
+                new int[] {R.string.four_hundred_question_a,
+                        R.string.four_hundred_question_b,
+                        R.string.four_hundred_question_c,
+                        R.string.four_hundred_question_d}, 400));
+        mGame.addQuestion(new Question(R.string.five_hundred_question,
+                R.string.five_hundred_question_d,
+                new int[] {R.string.five_hundred_question_a,
+                        R.string.five_hundred_question_b,
+                        R.string.five_hundred_question_c,
+                        R.string.five_hundred_question_d}, 500));
+        mGame.addQuestion(new Question(R.string.thousand_question,
+                R.string.thousand_question_c,
+                new int[] {R.string.thousand_question_a,
+                        R.string.thousand_question_b,
+                        R.string.thousand_question_c,
+                        R.string.thousand_question_d},1000));
+
     }
 
     private void updateQuestion()

@@ -37,7 +37,7 @@ public class Game {
 
     public boolean isFinalQuestion()
     {
-        return mCurrentQuestionIndex == this.mQuestions.size();
+        return (mCurrentQuestionIndex + 1) == this.mQuestions.size();
     }
 
     public void proceedToNextQuestion()
