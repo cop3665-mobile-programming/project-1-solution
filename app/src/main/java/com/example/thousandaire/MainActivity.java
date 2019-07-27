@@ -74,6 +74,10 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        if(resultCode == Activity.RESULT_CANCELED)
+        {
+            finish();
+        }
         if(resultCode != Activity.RESULT_OK)
         {
             return;

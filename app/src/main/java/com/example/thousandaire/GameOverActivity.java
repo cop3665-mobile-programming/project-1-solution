@@ -2,6 +2,7 @@ package com.example.thousandaire;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -23,5 +24,12 @@ public class GameOverActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        setResult(RESULT_CANCELED,null);
     }
 }
